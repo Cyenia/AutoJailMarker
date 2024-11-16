@@ -37,7 +37,8 @@ jobs:
         run: |
           Invoke-Expression "dotnet build --no-restore --configuration Release --nologo -p:Version=${{ env.VERSION }} -p:FileVersion=${{ env.VERSION }} -p:AssemblyVersion=${{ env.VERSION }}"
 
-      - name: Rename zip
+      - name: Prepare Release
+        id: prepare
         run: |
           $path = 'AutoJailMarker/bin/Release/AutoJailMarker'
           $json = Get-Content -Raw $path/AutoJailMarker.json | ConvertFrom-Json
@@ -59,6 +60,7 @@ jobs:
       - name: Write out repo.json
         env:
           VERSION: ${{ steps.version.outputs.VERSION }}
+          API: ${{ steps.prepare.outputs.API }}
         run: |
           $version = "${{ env.VERSION }}"
           $api = "${{ env.API }}"

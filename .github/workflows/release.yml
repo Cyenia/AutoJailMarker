@@ -63,7 +63,7 @@ jobs:
           API: ${{ steps.prepare.outputs.API }}
         run: |
           $version = "${{ env.VERSION }}"
-          $api = "${{ env.API }}"
+          $api = ${{ env.API }}
           $unix = Get-Date -UFormat %s
           $path = 'AutoJailMarker/repo.json'
           $json = Get-Content -Raw $path | ConvertFrom-Json

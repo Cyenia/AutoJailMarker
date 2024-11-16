@@ -16,7 +16,7 @@ jobs:
 
       - name: Get-Version
         id: version
-        run: echo "VERSION=$(([XML](Get-Content AutoJailMarker\AutoJailMarker.csproj)).Project.PropertyGroup.Version)".Trim() >> $env:GITHUB_OUTPUT
+        run: echo "VERSION=$(([XML](Get-Content AutoJailMarker/AutoJailMarker.csproj)).Project.PropertyGroup.Version)".Trim() >> $env:GITHUB_OUTPUT
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -38,7 +38,11 @@ jobs:
           Invoke-Expression "dotnet build --no-restore --configuration Release --nologo -p:Version=${{ env.VERSION }} -p:FileVersion=${{ env.VERSION }} -p:AssemblyVersion=${{ env.VERSION }}"
 
       - name: Rename zip
-        run: Move-Item -Path .\AutoJailMarker\bin\Release\AutoJailMarker\latest.zip -Destination .\AutoJailMarker.zip
+        run: |
+          $path = 'AutoJailMarker/bin/Release/AutoJailMarker'
+          $json = Get-Content -Raw $path/AutoJailMarker.json | ConvertFrom-Json
+          echo "API=$json[0].DalamudApiLevel".Trim() >> $env:GITHUB_OUTPUT
+          Move-Item -Path $path/latest.zip -Destination AutoJailMarker.zip
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -57,10 +61,12 @@ jobs:
           VERSION: ${{ steps.version.outputs.VERSION }}
         run: |
           $version = "${{ env.VERSION }}"
+          $api = "${{ env.API }}"
           $unix = Get-Date -UFormat %s
-          $path = './AutoJailMarker/repo.json'
+          $path = 'AutoJailMarker/repo.json'
           $json = Get-Content -Raw $path | ConvertFrom-Json
           $json[0].AssemblyVersion = $version
+          $json[0].DalamudApiLevel = $api
           $json[0].DownloadLinkInstall = $json.DownloadLinkInstall -replace '[^/]+/AutoJailMarker.zip',"$version/AutoJailMarker.zip"
           $json[0].DownloadLinkTesting = $json.DownloadLinkTesting -replace '[^/]+/AutoJailMarker.zip',"$version/AutoJailMarker.zip"
           $json[0].DownloadLinkUpdate = $json.DownloadLinkUpdate -replace '[^/]+/AutoJailMarker.zip',"$version/AutoJailMarker.zip"

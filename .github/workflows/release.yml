@@ -41,7 +41,7 @@ jobs:
         run: |
           $path = 'AutoJailMarker/bin/Release/AutoJailMarker'
           $json = Get-Content -Raw $path/AutoJailMarker.json | ConvertFrom-Json
-          echo "API=$json[0].DalamudApiLevel".Trim() >> $env:GITHUB_OUTPUT
+          echo "API=$($json[0].DalamudApiLevel)".Trim() >> $env:GITHUB_OUTPUT
           Move-Item -Path $path/latest.zip -Destination AutoJailMarker.zip
 
       - name: Create Release

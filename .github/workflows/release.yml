@@ -38,7 +38,7 @@ jobs:
           Invoke-Expression "dotnet build --no-restore --configuration Release --nologo -p:Version=${{ env.VERSION }} -p:FileVersion=${{ env.VERSION }} -p:AssemblyVersion=${{ env.VERSION }}"
 
       - name: Rename zip
-        run: Move-Item -Path .\AutoJailMarker\bin\Releases\AutoJailMarker\latest.zip -Destination .\AutoJailMarker.zip
+        run: Move-Item -Path .\AutoJailMarker\bin\Release\AutoJailMarker\latest.zip -Destination .\AutoJailMarker.zip
 
       - name: Create Release
         uses: softprops/action-gh-release@v2

@@ -37,28 +37,20 @@ jobs:
         run: |
           Invoke-Expression "dotnet build --no-restore --configuration Release --nologo -p:Version=${{ env.VERSION }} -p:FileVersion=${{ env.VERSION }} -p:AssemblyVersion=${{ env.VERSION }}"
 
+      - name: Rename zip
+        run: Move-Item -Path .\AutoJailMarker\bin\Releases\AutoJailMarker\latest.zip -Destination .\AutoJailMarker.zip
+
       - name: Create Release
-        id: create_release
-        uses: elgohr/Github-Release-Action@v5
+        uses: softprops/action-gh-release@v2
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: "refs/tags/${{ steps.version.outputs.VERSION }}"
           TITLE: ${{ steps.version.outputs.VERSION }}
         with:
-          tag: ${{ env.TAG }}
-          title : ${{ env.TITLE }}
+          tag_name: ${{ env.TAG }}
+          name : ${{ env.TITLE }}
+          draft: false
           prerelease: false
-
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./AutoJailMarker/bin/Release/AutoJailMarker/latest.zip
-          asset_name: AutoJailMarker.zip
-          asset_content_type: application/zip
+          files: AutoJailMarker.zip
 
       - name: Write out repo.json
         env:

@@ -39,14 +39,14 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: elgohr/Github-Release-Action@v5
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: "refs/tags/${{ steps.version.outputs.VERSION }}"
+          TITLE: ${{ steps.version.outputs.VERSION }}
         with:
-          tag_name: ${{ env.TAG }}
-          release_name: ${{ env.TAG }}
-          draft: false
+          tag: ${{ env.TAG }}
+          title : ${{ env.TITLE }}
           prerelease: false
 
       - name: Upload Release Asset
